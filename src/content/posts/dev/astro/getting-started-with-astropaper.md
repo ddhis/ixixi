@@ -291,9 +291,12 @@ const date = datetime.format("YYYY년 M월 D일");   // [!code ++]
   --font-app: var(--font-noto-sans-kr);   // [!code ++]
 ```
 
-C:\x\aourengosjdf\src\pages\posts\[...slug]\index.png.ts
-
 ```ts file=src/pages/posts/[...slug]/index.png.ts
+  const fonts = fontData["--font-google-sans-code"];  // [!code --]
+  const fonts = fontData["--font-noto-sans-kr"];   // [!code ++]
+```
+
+```ts file=src/pages/og.png.ts
   const fonts = fontData["--font-google-sans-code"];  // [!code --]
   const fonts = fontData["--font-noto-sans-kr"];   // [!code ++]
 ```
