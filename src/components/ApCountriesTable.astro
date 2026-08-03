@@ -138,165 +138,43 @@ import countries from '@/assets/json/countries.json';
     align-items: center;
   }
 
-  .search-input {
-    flex: 1;
-    min-width: 150px;
-    padding: 0.6rem 1rem;
-    border: 1px solid var(--border);
+  /* 입력창, 선택창, 배지, 카드, 태그 공통 테두리 스타일 묶음 */
+  .search-input,
+  .filter-select,
+  .result-badge,
+  .country-card,
+  .un-tag {
+    border: 1px solid;
     border-radius: 0.5rem;
-    background: var(--theme-bg);
-    color: inherit;
-    font-size: 0.95rem;
+    padding: 0.5rem 0.8rem;
   }
 
-  .filter-select {
-    padding: 0.6rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    background: var(--theme-bg);
-    color: inherit;
-    font-size: 0.95rem;
-    cursor: pointer;
-  }
+  .search-input { flex: 1; min-width: 150px; }
+  .result-badge { border-radius: 9999px; white-space: nowrap; }
 
-  .result-badge {
-    padding: 0.5rem 1rem;
-    background: #d1fae5;
-    color: #065f46;
-    border-radius: 9999px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    white-space: nowrap;
-  }
+  /* 테이블 스타일 최소화 */
+  .table-wrapper { overflow-x: auto; }
+  .countries-table { width: 100%; border-collapse: collapse; }
+  .countries-table th, 
+  .countries-table td { padding: 0.6rem; border: 1px solid; text-align: left; }
+  .countries-table th { font-weight: 600; white-space: nowrap; }
 
-  :global(.dark) .result-badge {
-    background: #064e3b;
-    color: #a7f3d0;
-  }
+  /* 숨김 및 기본 뷰 스위칭 */
+  .country-item.hidden,
+  .mobile-view { display: none !important; }
 
-  /* 반응형 뷰 스위칭 기본설정 */
-  .desktop-view {
-    display: block;
-  }
-  .mobile-view {
-    display: none;
-  }
-
-  /* 테이블 스타일 */
-  .table-wrapper {
-    overflow-x: auto;
-  }
-
-  .countries-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.95rem;
-  }
-
-  .countries-table th,
-  .countries-table td {
-    padding: 0.6rem 0.8rem;
-    border: 1px solid var(--border);
-    text-align: left;
-    vertical-align: middle;
-  }
-
-  .countries-table th {
-    background: var(--theme-bg-secondary);
-    font-weight: 600;
-    white-space: nowrap;
-  }
-
-  .countries-table img {
-    display: block;
-    border-radius: 2px;
-  }
-
-  /* 공통 숨김 처리 */
-  .country-item.hidden {
-    display: none !important;
-  }
-
-  /* 모바일 가독성 설정 (768px 이하) */
+  /* 모바일 가독성 최적화 (768px 이하) */
   @media (max-width: 768px) {
-    .desktop-view {
-      display: none;
-    }
-    .mobile-view {
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-    }
+    .desktop-view { display: none !important; }
+    .mobile-view { display: flex !important; flex-direction: column; gap: 0.8rem; color: #ffffff;}
 
-    .country-card {
-      border: 1px solid var(--border);
-      border-radius: 0.6rem;
-      padding: 0.9rem 1rem;
-      background: var(--theme-bg);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      margin-bottom: 0.6rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .card-header img {
-      border-radius: 2px;
-    }
-
-    .card-title {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      font-size: 0.95rem;
-      line-height: 1.2;
-    }
-
-    .card-title .en-name {
-      font-size: 0.8rem;
-      opacity: 0.75;
-    }
-
-    .un-tag {
-      font-size: 0.75rem;
-      padding: 0.2rem 0.5rem;
-      border-radius: 0.3rem;
-      background: var(--theme-bg-secondary);
-      opacity: 0.8;
-      white-space: nowrap;
-    }
-
-    .un-tag.is-un {
-      background: #e0f2fe;
-      color: #0369a1;
-    }
-
-    :global(.dark) .un-tag.is-un {
-      background: #075985;
-      color: #bae6fd;
-    }
-
-    .card-body {
-      display: grid;
-      gap: 0.35rem;
-      font-size: 0.875rem;
-    }
-
-    .info-row {
-      display: flex;
-      gap: 0.4rem;
-    }
-
-    .info-row .label {
-      font-weight: 600;
-      min-width: 36px;
-      opacity: 0.7;
-    }
+    .card-header, .info-row { display: flex; gap: 0.5rem; align-items: center; }
+    .card-header { padding-bottom: 0.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid; }
+    .card-title { flex: 1; display: flex; flex-direction: column; line-height: 1.2; }
+    .card-title .en-name { font-size: 0.8rem; }
+    .card-body { display: grid; gap: 0.3rem; font-size: 0.875rem; }
+    .info-row .label { font-weight: 600; min-width: 36px; }
+    .un-tag { font-size: 0.75rem; padding: 0.1rem 0.4rem; }
   }
 </style>
 
