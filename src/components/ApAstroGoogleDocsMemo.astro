@@ -38,24 +38,35 @@
   const copyBtn = document.getElementById('copyBtn') as HTMLButtonElement | null;
 
   let saveTimer: ReturnType<typeof setTimeout> | null = null;
+  let isFetching = false; // 중복 요청 방지 플래그
 
   // 1. 구글 문서 내용 불러오기
   async function loadMemo() {
+    if (isFetching) return;
     try {
-      if (statusEl) statusEl.innerText = "불러오는 중...";
+      isFetching = true;
       const res = await fetch(GOOGLE_SCRIPT_URL);
       const data = await res.json();
       
-      if (memoEl) {
-        memoEl.value = data.text || "";
+      // 입력창에 포커스가 없을 때만 내용 업데이트 (입력 중인 글자 덮어쓰기 방지)
+      if (memoEl && document.activeElement !== memoEl) {
+        // 서버 내용과 현재 입력창 내용이 다를 때만 갱신
+        if (memoEl.value !== (data.text || "")) {
+          memoEl.value = data.text || "";
+          if (statusEl) statusEl.innerText = "🔄 최신 내용으로 동기화됨";
+          setTimeout(() => {
+            if (statusEl && statusEl.innerText.includes("동기화")) statusEl.innerText = "자동 저장 준비됨";
+          }, 2000);
+        }
       }
-      if (statusEl) statusEl.innerText = "자동 저장 준비됨";
     } catch (err) {
-      if (statusEl) statusEl.innerText = "불러오기 실패";
+      // 불러오기 실패 시 조용히 무시
+    } finally {
+      isFetching = false;
     }
   }
 
-  // 2. 구글 문서로 저장하는 함수
+  // 2. 구글 문서로 저장
   async function saveMemo() {
     if (!memoEl) return;
     if (statusEl) statusEl.innerText = "저장 중...";
@@ -65,49 +76,37 @@
         method: "POST",
         body: JSON.stringify({ text: memoEl.value })
       });
-      if (statusEl) {
-        statusEl.innerText = "✨ 자동 저장 완료";
-      }
+      if (statusEl) statusEl.innerText = "✨ 자동 저장 완료";
     } catch (err) {
       if (statusEl) statusEl.innerText = "❌ 저장 실패";
     }
   }
 
-  // 3. 타이핑 입력 이벤트 (타이핑을 멈추고 1초 뒤 자동 저장)
+  // 3. 타이핑 입력 이벤트 (1초 뒤 자동 저장)
   if (memoEl) {
     memoEl.addEventListener('input', () => {
       if (statusEl) statusEl.innerText = "작성 중...";
-      
-      // 이전 타이머가 있다면 취소 (연속 입력 중일 때는 저장 안 함)
       if (saveTimer) clearTimeout(saveTimer);
 
-      // 타이핑이 멈춘 지 1000ms(1초) 후에 saveMemo 실행
       saveTimer = setTimeout(() => {
         saveMemo();
       }, 1000);
     });
   }
 
-  // 4. 전체 복사 버튼 클릭 이벤트
+  // 4. 복사 버튼
   if (copyBtn) {
     copyBtn.addEventListener('click', async () => {
       if (!memoEl || !memoEl.value) {
         alert("복사할 내용이 없습니다.");
         return;
       }
-
       try {
-        // 클립보드로 전체 내용 복사
         await navigator.clipboard.writeText(memoEl.value);
-        
-        // 버튼 텍스트 잠시 변경 피드백
         const originalText = copyBtn.innerText;
         copyBtn.innerText = "✅ 복사 완료!";
-        setTimeout(() => {
-          copyBtn.innerText = originalText;
-        }, 2000);
+        setTimeout(() => copyBtn.innerText = originalText, 2000);
       } catch (err) {
-        // 클립보드 API가 지원되지 않는 환경을 위한 텍스트 드래그 복사 백업
         memoEl.select();
         document.execCommand('copy');
         alert("클립보드에 복사되었습니다!");
@@ -115,6 +114,11 @@
     });
   }
 
-  // 초기 실행
+  // [최초 실행] 즉시 불러오기
   loadMemo();
+
+  // [주기적 실행] 5초마다 상대방이 변경한 내용이 있는지 자동 체크
+  setInterval(() => {
+    loadMemo();
+  }, 5000);
 </script>
