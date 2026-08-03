@@ -1,0 +1,232 @@
+---
+// src/components/ApMathGame.astro
+---
+<div class="math-game-container">
+  <div id="game">
+    <header>
+      <div id="score">Score 0 | Combo 0</div>
+      <div id="progress">문제 0 / 20</div>
+      <div id="difficulty">
+        <button class="diffbtn active" data-level="easy">쉬움</button>
+        <button class="diffbtn" data-level="hard">어려움</button>
+        <button class="diffbtn" data-level="review">복습</button>
+        <button class="diffbtn" id="openWrongBtn">오답노트</button>
+      </div>
+      <div id="problem">2 × 3</div>
+      <div id="input"></div>
+      <div id="answer"></div>
+    </header>
+
+    <div id="keypad">
+      {Array.from({ length: 9 }, (_, i) => i + 1).map(num => (
+        <button class="key-btn" data-key={num}>{num}</button>
+      ))}
+      <button class="action-btn" id="backBtn">←</button>
+      <button class="key-btn" data-key="0">0</button>
+      <button class="action-btn" id="skipBtn">SKIP</button>
+    </div>
+  </div>
+
+  <div id="wrongModal" class="modal">
+    <div class="result-box">
+      <h2>오답 노트</h2>
+      <div id="wrongList"></div>
+      <div class="modal-actions">
+        <button id="clearWrongBtn" class="sub-btn">초기화</button>
+        <button id="closeWrongBtn" class="accent-btn">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="resultModal" class="modal">
+    <div class="result-box">
+      <h2>게임 종료</h2>
+      <p id="finalScore"></p>
+      <p id="bestScore"></p>
+      <button id="restartBtn" class="accent-btn">다시하기</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .math-game-container {
+    width: 100%; max-width: 420px; margin: 0 auto; padding: 1rem;
+    background: var(--color-fill, #1a1a1a); color: var(--color-text-base, #fff);
+    border-radius: 16px; border: 1px solid var(--color-border, #333);
+    user-select: none; touch-action: manipulation; font-family: inherit;
+  }
+  #game, header { width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; }
+  #score { font-size: 1.1rem; font-weight: 600; color: var(--color-accent, #2ecc71); }
+  #progress { font-size: 0.875rem; opacity: 0.7; }
+  #difficulty { display: flex; gap: 0.5rem; margin: 1rem 0; flex-wrap: wrap; justify-content: center; }
+  .diffbtn {
+    font-size: 0.875rem; padding: 0.4rem 0.8rem; border-radius: 8px;
+    border: 1px solid var(--color-border, #444); background: var(--color-card, #2a2a2a);
+    color: inherit; cursor: pointer; transition: 0.2s;
+  }
+  .diffbtn.active { background: var(--color-accent, #2ecc71); color: #fff; border-color: var(--color-accent, #2ecc71); font-weight: bold; }
+  #problem { font-size: 3rem; font-weight: 700; margin: 0.5rem 0; letter-spacing: 2px; }
+  #input { font-size: 2.25rem; font-weight: 600; min-height: 2.75rem; color: var(--color-accent, #2ecc71); border-bottom: 2px solid var(--color-border, #444); width: 80%; display: flex; align-items: center; justify-content: center; }
+  #answer { height: 1.5rem; color: #ff7675; font-weight: 600; margin-top: 0.5rem; }
+  #keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.65rem; width: 100%; margin-top: 1rem; }
+  #keypad button {
+    font-size: 1.5rem; padding: 0.85rem 0; border: 1px solid var(--color-border, #333);
+    border-radius: 12px; background: var(--color-card, #2d2d2d); color: inherit; cursor: pointer;
+  }
+  #keypad button:active { transform: scale(0.96); background: var(--color-border, #444); }
+  .action-btn { font-size: 1rem !important; font-weight: bold; }
+  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 1000; }
+  .result-box { background: var(--color-fill, #1a1a1a); border: 1px solid var(--color-border, #333); padding: 1.5rem; border-radius: 16px; text-align: center; width: 85%; max-width: 320px; }
+  .result-box h2 { margin-top: 0; font-size: 1.5rem; }
+  #wrongList { max-height: 200px; overflow-y: auto; margin: 1rem 0; text-align: left; font-size: 0.95rem; }
+  .modal-actions { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; }
+  .accent-btn, .sub-btn { padding: 0.5rem 1.25rem; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; }
+  .accent-btn { background: var(--color-accent, #2ecc71); color: #fff; }
+  .sub-btn { background: var(--color-card, #333); color: inherit; }
+</style>
+
+<script>
+  let difficulty = "easy", a = 0, b = 0, answer = 0, input = "", score = 0, combo = 0, problemCount = 0;
+  const totalProblems = 20;
+
+  const getStorage = (key: string) => JSON.parse(localStorage.getItem(key) || "{}");
+  const setStorage = (key: string, val: any) => localStorage.setItem(key, typeof val === "object" ? JSON.stringify(val) : val);
+
+  const bannedSet = new Set(["2x2","2x3","2x4","2x5","2x6","2x7","2x8","2x9","3x2","3x3","3x4","3x5","4x2","4x3","4x4","4x5","5x2","5x3","5x4","5x5","6x2","6x3","7x2","7x3","8x2","9x2","9x5"]);
+
+  function initGame() {
+    const $ = (id: string) => document.getElementById(id)!;
+
+    function startGame() {
+      $("resultModal").style.display = "none";
+      score = combo = problemCount = 0;
+      nextProblem();
+    }
+
+    function nextProblem() {
+      if (problemCount >= totalProblems) return endGame();
+      problemCount++;
+      input = $("input").textContent = $("answer").textContent = "";
+      generateProblem();
+      $("problem").textContent = `${a} × ${b}`;
+      updateUI();
+    }
+
+    function generateProblem() {
+      if (difficulty === "review") {
+        const list = getWrongProblems();
+        if (!list.length) { alert("틀린 문제가 없습니다!"); setDifficulty("easy"); return generateProblem(); }
+        let pick;
+        do { pick = list[Math.floor(Math.random() * Math.min(10, list.length))]; } while (bannedSet.has(`${pick.a}x${pick.b}`));
+        a = pick.a; b = pick.b; answer = a * b; return;
+      }
+      const [min, max] = difficulty === "hard" ? [12, 19] : [2, 9];
+      let tries = 0;
+      do {
+        a = Math.floor(Math.random() * (max - min + 1)) + min;
+        b = Math.floor(Math.random() * (max - min + 1)) + min;
+      } while (bannedSet.has(`${a}x${b}`) && ++tries < 50);
+      answer = a * b;
+    }
+
+    function updateUI() {
+      $("score").textContent = `Score ${score} | Combo ${combo}`;
+      $("progress").textContent = `문제 ${problemCount} / ${totalProblems}`;
+    }
+
+    function press(num: string) {
+      input += num;
+      $("input").textContent = input;
+      if (input.length === String(answer).length) check();
+    }
+
+    function check() {
+      if (Number(input) === answer) {
+        score += 10 + combo++ * 2;
+        updateWrong(a, b, -1);
+        setTimeout(nextProblem, 400);
+      } else {
+        combo = 0;
+        updateWrong(a, b, 1);
+        showAnswer();
+      }
+      updateUI();
+    }
+
+    function showAnswer() {
+      $("answer").textContent = `정답: ${answer}`;
+      setTimeout(nextProblem, 1000);
+    }
+
+    function endGame() {
+      const bestKey = difficulty === "easy" ? "bestEasy" : difficulty === "hard" ? "bestHard" : null;
+      let best = "-";
+      if (bestKey) {
+        best = String(Math.max(score, Number(localStorage.getItem(bestKey)) || 0));
+        setStorage(bestKey, best);
+      }
+      $("finalScore").textContent = `점수 : ${score}`;
+      $("bestScore").textContent = `최고점 : ${best}`;
+      $("resultModal").style.display = "flex";
+    }
+
+    function setDifficulty(level: string) {
+      difficulty = level;
+      document.querySelectorAll(".diffbtn[data-level]").forEach(b => {
+        b.classList.toggle("active", (b as HTMLElement).dataset.level === level);
+      });
+      startGame();
+    }
+
+    function updateWrong(numA: number, numB: number, delta: number) {
+      const wrong = getStorage("wrongProblems");
+      const key = `${numA}x${numB}`;
+      wrong[key] = (wrong[key] || 0) + delta;
+      if (wrong[key] <= 0) delete wrong[key];
+      setStorage("wrongProblems", wrong);
+    }
+
+    function getWrongProblems() {
+      const wrong = getStorage("wrongProblems");
+      return Object.keys(wrong)
+        .map(k => ({ a: Number(k.split("x")[0]), b: Number(k.split("x")[1]), count: wrong[k] }))
+        .sort((x, y) => y.count - x.count);
+    }
+
+    function showWrongList() {
+      const wrong = getWrongProblems();
+      $("wrongList").innerHTML = wrong.length
+        ? wrong.map(i => `<div style="margin:6px 0;">${i.a} × ${i.b} = <b>${i.a * i.b}</b> <span style="opacity:0.6;font-size:0.85em;">(${i.count}회)</span></div>`).join("")
+        : "<p style='text-align:center;'>오답이 없습니다</p>";
+      $("wrongModal").style.display = "flex";
+    }
+
+    // Events
+    document.querySelectorAll(".diffbtn[data-level]").forEach(b => b.addEventListener("click", e => setDifficulty((e.currentTarget as HTMLElement).dataset.level!)));
+    document.querySelectorAll(".key-btn").forEach(b => b.addEventListener("click", e => press((e.currentTarget as HTMLElement).dataset.key!)));
+    $("backBtn")?.addEventListener("click", () => { input = input.slice(0, -1); $("input").textContent = input; });
+    $("skipBtn")?.addEventListener("click", () => { combo = 0; updateWrong(a, b, 1); showAnswer(); });
+    $("openWrongBtn")?.addEventListener("click", showWrongList);
+    $("closeWrongBtn")?.addEventListener("click", () => $("wrongModal").style.display = "none");
+    $("clearWrongBtn")?.addEventListener("click", () => { if (confirm("오답 기록을 모두 삭제할까요?")) { localStorage.removeItem("wrongProblems"); showWrongList(); } });
+    $("restartBtn")?.addEventListener("click", startGame);
+
+    startGame();
+  }
+
+let initialized = false;
+
+function runInit() {
+  if (initialized) return;
+  initialized = true;
+  initGame();
+}
+
+document.addEventListener("astro:page-load", runInit);
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", runInit, { once: true });
+} else {
+  runInit();
+}
+</script>

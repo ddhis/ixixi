@@ -1,0 +1,289 @@
+[
+  {
+    "url": "https://www.google.com",
+    "title": "구글",
+    "categories": ["dev", "youtube"],
+    "tags": ["검색"],
+    "description": "세계 최대 검색 엔진"
+  },
+  {
+    "url": "https://youtube.com",
+    "title": "유튜브",
+    "categories": ["youtube"],
+    "tags": ["유튜브"],
+    "description": "세계 최대 동영상 공유 플랫폼"
+  },
+  {
+    "url": "https://studio.youtube.com/",
+    "title": "유튜브 스튜디오",
+    "categories": ["youtube"],
+    "tags": ["유튜브"],
+    "description": "유튜브 크리에이터를 위한 관리 플랫폼"
+  },
+  {
+    "url": "https://papago.naver.com",
+    "title": "파파고",
+    "categories": ["dev", "youtube", "blog"],
+    "tags": ["번역"],
+    "description": "세계 최대 번역 서비스"
+  },
+  {
+    "url": "https://supabase.com/dashboard",
+    "title": "슈퍼베이스",
+    "categories": ["dev"],
+    "tags": ["개발"],
+    "description": "세계 최대 번역 서비스"
+  },
+  {
+    "url": "https://github.com",
+    "title": "깃허브",
+    "categories": ["dev"],
+    "tags": ["개발"],
+    "description": "세계 최대 코드 저장소 및 협업 플랫폼"
+  },
+  {
+    "url": "https://www.standbuy.io",
+    "title": "스탠드바이",
+    "categories": ["side"],
+    "tags": ["부업"],
+    "description": "세계 최대 온라인 쇼핑 플랫폼"
+  },
+  {
+    "url": "https://kosis.kr/index/index.do",
+    "title": "KOSIS",
+    "categories": ["blog"],
+    "tags": ["통계"],
+    "description": "대한민국의 공식 통계 정보 제공 플랫폼"
+  },
+  {
+    "url": "https://zzal.studio",
+    "title": "짤스튜디오",
+    "categories": ["youtube"],
+    "tags": ["유튜브"],
+    "description": "음원 수익 플랫폼"
+  },
+  {
+    "url": "https://www.motionelements.com/ko",
+    "title": "모션엘리먼츠",
+    "categories": ["side"],
+    "tags": ["부업"],
+    "description": "프리미엄 모션 그래픽 리소스 제공 플랫폼"
+  },
+  {
+    "url": "https://whalewisdom.com",
+    "title": "웨일위즈덤",
+    "categories": ["stock"],
+    "tags": ["주식"],
+    "description": "주식 투자 정보 제공 플랫폼"
+  },
+  {
+    "url": "https://edition.cnn.com/markets/fear-and-greed",
+    "title": "공포 및 탐욕 지수",
+    "categories": ["stock"],
+    "tags": ["주식"],
+    "description": "시장 심리 지표 제공 플랫폼"
+  },
+  {
+    "url": "https://www.whois.com",
+    "title": "WHOIS",
+    "categories": ["dev"],
+    "tags": ["개발"],
+    "description": "도메인 정보 조회 플랫폼"
+  },
+  {
+    "url": "https://platform.openai.com/settings/organization/usage",
+    "title": "OpenAI API",
+    "categories": ["dev"],
+    "tags": ["개발"],
+    "description": "OpenAI 사용량 조회 플랫폼"
+  },
+  {
+    "url": "https://app.netlify.com/",
+    "title": "Netlify",
+    "categories": ["dev"],
+    "tags": ["개발"],
+    "description": "정적 사이트 호스팅 및 CI/CD 플랫폼"
+  },
+  {
+    "url": "https://www.cloudflare.com",
+    "title": "Cloudflare",
+    "categories": ["dev"],
+    "tags": ["개발"],
+    "description": "웹 보안 및 성능 최적화 플랫폼"
+  },
+  {
+    "url": "https://chatgpt.com",
+    "title": "ChatGPT",
+    "categories": ["dev", "youtube"],
+    "tags": ["개발", "유튜브"],
+    "description": "인공지능 챗봇"
+  },
+  {
+    "url": "https://claude.ai/new",
+    "title": "Claude",
+    "categories": ["dev", "youtube"],
+    "tags": ["개발", "유튜브"],
+    "description": "인공지능 챗봇"
+  },
+  {
+    "url": "https://www.seaart.ai",
+    "title": "SeaArt",
+    "categories": ["blog", "youtube"],
+    "tags": ["블로그", "유튜브"],
+    "description": "인공지능 아트 생성 플랫폼"
+  },
+  {
+    "url": "https://kling.ai/ko",
+    "title": "Kling AI",
+    "categories": ["blog", "youtube"],
+    "tags": ["블로그", "유튜브"],
+    "description": "인공지능 아트 생성 플랫폼"
+  },
+  {
+    "url": "https://dream-machine.lumalabs.ai/",
+    "title": "Dream Machine",
+    "categories": ["blog", "youtube"],
+    "tags": ["블로그", "유튜브"],
+    "description": "인공지능 아트 생성 플랫폼"
+  },
+  {
+    "url": "https://www.bing.com/images/create",
+    "title": "Bing Images",
+    "categories": ["blog", "youtube"],
+    "tags": ["블로그", "유튜브"],
+    "description": "인공지능을 사용한 이미지 생성 플랫폼"
+  },
+  {
+    "url": "https://www.krea.ai",
+    "title": "Krea AI",
+    "categories": ["blog", "youtube"],
+    "tags": ["블로그", "유튜브"],
+    "description": "인공지능 아트 생성 플랫폼"
+  },
+  {
+    "url": "https://firefly.adobe.com/inspire/images",
+    "title": "Firefly",
+    "categories": ["blog", "youtube"],
+    "tags": ["블로그", "유튜브"],
+    "description": "인공지능을 사용한 이미지 생성 플랫폼"
+  },
+  {
+    "url": "https://leonardo.ai/",
+    "title": "Leonardo AI",
+    "categories": ["blog", "youtube"],
+    "tags": ["블로그", "유튜브"],
+    "description": "인공지능 아트 생성 플랫폼"
+  },
+  {
+    "url": "https://ideogram.ai",
+    "title": "Ideogram",
+    "categories": ["blog", "youtube"],
+    "tags": ["블로그", "유튜브"],
+    "description": "인공지능 아트 생성 플랫폼"
+  },
+  {
+    "url": "https://playground.com",
+    "title": "Playground",
+    "categories": ["blog", "youtube"],
+    "tags": ["블로그", "유튜브"],
+    "description": "인공지능 아트 생성 플랫폼"
+  },
+  {
+    "url": "https://labs.google/fx/ko",
+    "title": "Google FX",
+    "categories": ["blog", "youtube"],
+    "tags": ["블로그", "유튜브"],
+    "description": "인공지능을 사용한 이미지 생성 플랫폼"
+  },
+  {
+    "url": "https://www.artbreeder.com/tools",
+    "title": "Artbreeder",
+    "categories": ["blog", "youtube"],
+    "tags": ["블로그", "유튜브"],
+    "description": "인공지능을 사용한 이미지 생성 플랫폼"
+  },
+  {
+    "url": "https://www.artguru.ai/",
+    "title": "ArtGuru",
+    "categories": ["blog", "youtube"],
+    "tags": ["블로그", "유튜브"],
+    "description": "인공지능을 사용한 이미지 생성 플랫폼"
+  },
+  {
+    "url": "https://wrtn.ai",
+    "title": "뤼튼",
+    "categories": ["blog", "youtube"],
+    "tags": ["블로그", "유튜브"],
+    "description": "인공지능을 사용한 요약 플랫폼"
+  },
+  {
+    "url": "https://www.piclumen.com",
+    "title": "PicLumen",
+    "categories": ["blog", "youtube"],
+    "tags": ["블로그", "유튜브"],
+    "description": "인공지능을 사용한 이미지 생성 플랫폼"
+  },
+  {
+    "url": "https://app.pixverse.ai",
+    "title": "Pixverse",
+    "categories": ["blog", "youtube"],
+    "tags": ["블로그", "유튜브"],
+    "description": "인공지능을 사용한 이미지 생성 플랫폼"
+  },
+  {
+    "url": "https://viggle.ai",
+    "title": "Viggle",
+    "categories": ["blog", "youtube"],
+    "tags": ["블로그", "유튜브"],
+    "description": "인공지능을 사용한 모션기반 플랫폼"
+  },
+  {
+    "url": "https://www.kaiber.ai",
+    "title": "Kaiber",
+    "categories": ["blog", "youtube"],
+    "tags": ["블로그", "유튜브"],
+    "description": "인공지능을 사용한 이미지 생성 플랫폼"
+  },
+  {
+    "url": "https://suno.com/discover",
+    "title": "Suno",
+    "categories": ["youtube"],
+    "tags": ["유튜브"],
+    "description": "인공지능을 사용한 음악 생성 플랫폼"
+  },
+  {
+    "url": "https://elevenlabs.io/app/home",
+    "title": "ElevenLabs",
+    "categories": ["youtube"],
+    "tags": ["유튜브"],
+    "description": "인공지능을 사용한 음성 생성 플랫폼"
+  },
+  {
+    "url": "https://typecast.ai/kr",
+    "title": "Typecast",
+    "categories": ["youtube"],
+    "tags": ["유튜브"],
+    "description": "인공지능을 사용한 음성 생성 플랫폼"
+  },
+  {
+    "url": "https://ttsmaker.com/ko",
+    "title": "TTS Maker",
+    "categories": ["youtube"],
+    "tags": [ "유튜브"],
+    "description": "인공지능을 사용한 텍스트-to-음성 변환 플랫폼"
+  },
+  {
+    "url": "https://adsense.google.com/adsense",
+    "title": "Google AdSense",
+    "categories": ["blog"],
+    "tags": ["블로그"],
+    "description": "구글 광고 네트워크"
+  },
+  {
+    "url": "https://search.google.com/search-console",
+    "title": "Google Search Console",
+    "categories": ["blog"],
+    "tags": ["블로그"],
+    "description": "구글 검색 콘솔"
+  }
+]

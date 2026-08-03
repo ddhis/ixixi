@@ -1,0 +1,170 @@
+---
+import bookmarksData from "@/assets/json/bookmarks.json";
+
+function getDomain(url: string) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+}
+
+const bookmarks = bookmarksData.map((bm) => {
+  const domain = getDomain(bm.url);
+  return {
+    ...bm,
+    title: bm.title || domain,
+    favicon: `https://www.google.com/s2/favicons?domain=${domain}&sz=64`,
+    cats: (bm.categories || []).join(" "),
+    tags: bm.tags || [],
+  };
+});
+
+// 카테고리 이름 매핑 (없으면 id 그대로 사용)
+const categoryNames: Record<string, string> = {
+  youtube: "유튜브",
+  dev: "개발",
+  life: "일상",
+  side: "부업",
+  gaming: "게임",
+  blog: "블로그",
+  stock: "주식",
+};
+
+// 데이터에서 카테고리 자동 추출
+const uniqueCategories = [...new Set(bookmarks.flatMap((bm) => bm.categories || []))];
+
+const CATEGORIES = [
+  { id: "all", name: "전체" },
+  ...uniqueCategories.map((id) => ({
+    id,
+    name: categoryNames[id] || id,
+  })),
+];
+
+// 태그별로 그룹핑
+const tagMap = new Map<string, typeof bookmarks>();
+
+bookmarks.forEach((bm) => {
+  bm.tags.forEach((tag) => {
+    if (!tagMap.has(tag)) tagMap.set(tag, []);
+    tagMap.get(tag)!.push(bm);
+  });
+});
+
+const tagGroups = Array.from(tagMap.entries());
+---
+
+<div class="not-prose my-8">
+  <!-- 카테고리 필터 -->
+  <div class="mb-8 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+    {CATEGORIES.map(({ id, name }) => (
+      <button
+        data-category={id}
+        class="category-btn text-skin-muted transition-colors hover:text-skin-accent"
+      >
+        {name}
+      </button>
+    ))}
+  </div>
+
+  <!-- 태그별 구역 -->
+  <div class="space-y-10" id="bookmark-list">
+    {tagGroups.map(([tag, items]) => (
+      <section class="tag-section" data-tag={tag}>
+        <h2 class="mb-3 text-sm font-medium text-skin-muted">{tag}</h2>
+
+        <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((bm) => (
+            <li class="bookmark-card" data-categories={bm.cats}>
+              <a
+                href={bm.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group block rounded-xl border border-skin-line bg-skin-card p-4 transition-all hover:border-skin-accent hover:bg-skin-card-hover"
+              >
+                <div class="flex items-center gap-1.5">
+                  <img
+                    src={bm.favicon}
+                    alt=""
+                    class="m-0 h-4 w-4 shrink-0 rounded-sm object-contain opacity-80 group-hover:opacity-100"
+                    loading="lazy"
+                    onerror="this.style.display='none'"
+                  />
+                  <span class="truncate text-sm font-medium text-skin-base group-hover:text-skin-accent">
+                    {bm.title}
+                  </span>
+                </div>
+                {bm.description && (
+                  <p class="mt-2 line-clamp-2 text-xs leading-relaxed text-skin-muted">
+                    {bm.description}
+                  </p>
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+
+  <div id="no-results" class="hidden py-16 text-center text-sm text-skin-muted">
+    해당 카테고리에 등록된 북마크가 없습니다.
+  </div>
+</div>
+
+<script>
+  function setup() {
+    const buttons = document.querySelectorAll<HTMLButtonElement>(".category-btn");
+    const cards = document.querySelectorAll<HTMLLIElement>(".bookmark-card");
+    const sections = document.querySelectorAll<HTMLElement>(".tag-section");
+    const noResults = document.getElementById("no-results");
+
+    const getCategory = () =>
+      new URLSearchParams(location.search).get("category") || "all";
+
+    function filter(selected: string) {
+      let totalVisible = 0;
+
+      cards.forEach((card) => {
+        const match =
+          selected === "all" ||
+          (card.dataset.categories || "").split(" ").includes(selected);
+        card.classList.toggle("hidden", !match);
+        if (match) totalVisible++;
+      });
+
+      sections.forEach((section) => {
+        const visibleCards = section.querySelectorAll(".bookmark-card:not(.hidden)");
+        section.classList.toggle("hidden", visibleCards.length === 0);
+      });
+
+      noResults?.classList.toggle("hidden", totalVisible > 0);
+
+      buttons.forEach((btn) => {
+        const active = btn.dataset.category === selected;
+        btn.classList.toggle("text-skin-accent", active);
+        btn.classList.toggle("font-medium", active);
+        btn.classList.toggle("text-skin-muted", !active);
+      });
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const cat = btn.dataset.category || "all";
+        const url = new URL(location.href);
+        cat === "all"
+          ? url.searchParams.delete("category")
+          : url.searchParams.set("category", cat);
+        history.pushState({}, "", url);
+        filter(cat);
+      });
+    });
+
+    window.addEventListener("popstate", () => filter(getCategory()));
+    filter(getCategory());
+  }
+
+  setup();
+  document.addEventListener("astro:after-swap", setup);
+</script>

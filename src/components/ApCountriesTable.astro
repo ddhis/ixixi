@@ -1,0 +1,369 @@
+---
+import countries from '@/assets/json/countries.json';
+---
+
+<div class="countries-wrapper">
+  <!-- 검색 / 필터 영역 -->
+  <div class="filters">
+    <input
+      type="text"
+      id="search-input"
+      placeholder="국가명, 수도, 국가코드 검색..."
+      class="search-input"
+    />
+
+    <select id="continent-filter" class="filter-select">
+      <option value="">모든 대륙</option>
+      <option value="아시아">아시아</option>
+      <option value="유럽">유럽</option>
+      <option value="아프리카">아프리카</option>
+      <option value="북아메리카">북아메리카</option>
+      <option value="남아메리카">남아메리카</option>
+      <option value="오세아니아">오세아니아</option>
+      <option value="남극">남극</option>
+    </select>
+
+    <select id="un-filter" class="filter-select">
+      <option value="">UN 가입 여부</option>
+      <option value="true">UN 가입국</option>
+      <option value="false">UN 미가입</option>
+    </select>
+
+    <div class="result-badge" id="result-count">
+      {countries.length}개국 / 총 {countries.length}개국
+    </div>
+  </div>
+
+  <!-- 1. 데스크톱용 테이블 뷰 -->
+  <div class="table-wrapper desktop-view">
+    <table class="countries-table">
+      <thead>
+        <tr>
+          <th>국기</th>
+          <th>한글 이름 (영문)</th>
+          <th>한글 수도 (영문)</th>
+          <th>한글 대륙 (영문)</th>
+          <th>UN 회원</th>
+          <th>국가 코드</th>
+          <th>언어 코드</th>
+        </tr>
+      </thead>
+      <tbody id="countries-body">
+        {countries.map((c) => (
+          <tr
+            class="country-item"
+            data-name={`${c.name_ko} ${c.name_en}`}
+            data-capital={`${c.capital_ko} ${c.capital_en}`}
+            data-code={c.country_code}
+            data-continent={c.continent_ko}
+            data-un={String(c.un_member)}
+          >
+            <td>
+              <img
+                src={`https://flagcdn.com/w40/${c.code_2}.png`}
+                alt={`${c.name_ko} 국기`}
+                width="40"
+                height="30"
+                loading="lazy"
+              />
+            </td>
+            <td>{c.name_ko} ({c.name_en})</td>
+            <td>{c.capital_ko} ({c.capital_en})</td>
+            <td>{c.continent_ko} ({c.continent_en})</td>
+            <td>{c.un_member ? '✅' : '❌'}</td>
+            <td>{c.country_code}</td>
+            <td>{c.language_code}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 2. 모바일용 카드 뷰 -->
+  <div class="cards-wrapper mobile-view" id="countries-cards">
+    {countries.map((c) => (
+      <div
+        class="country-card country-item"
+        data-name={`${c.name_ko} ${c.name_en}`}
+        data-capital={`${c.capital_ko} ${c.capital_en}`}
+        data-code={c.country_code}
+        data-continent={c.continent_ko}
+        data-un={String(c.un_member)}
+      >
+        <div class="card-header">
+          <img
+            src={`https://flagcdn.com/w40/${c.code_2}.png`}
+            alt={`${c.name_ko} 국기`}
+            width="32"
+            height="24"
+            loading="lazy"
+          />
+          <div class="card-title">
+            <strong>{c.name_ko}</strong>
+            <span class="en-name">({c.name_en})</span>
+          </div>
+          <span class={`un-tag ${c.un_member ? 'is-un' : ''}`}>
+            {c.un_member ? 'UN 가입' : 'UN 미가입'}
+          </span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <span class="label">수도:</span>
+            <span>{c.capital_ko} ({c.capital_en})</span>
+          </div>
+          <div class="info-row">
+            <span class="label">대륙:</span>
+            <span>{c.continent_ko} ({c.continent_en})</span>
+          </div>
+          <div class="info-row font-mono">
+            <span class="label">코드:</span>
+            <span>국가 {c.country_code} / 언어 {c.language_code}</span>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .countries-wrapper {
+    margin: 2rem 0;
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    align-items: center;
+  }
+
+  .search-input {
+    flex: 1;
+    min-width: 150px;
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--theme-bg);
+    color: inherit;
+    font-size: 0.95rem;
+  }
+
+  .filter-select {
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--theme-bg);
+    color: inherit;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+
+  .result-badge {
+    padding: 0.5rem 1rem;
+    background: #d1fae5;
+    color: #065f46;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  :global(.dark) .result-badge {
+    background: #064e3b;
+    color: #a7f3d0;
+  }
+
+  /* 반응형 뷰 스위칭 기본설정 */
+  .desktop-view {
+    display: block;
+  }
+  .mobile-view {
+    display: none;
+  }
+
+  /* 테이블 스타일 */
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+  .countries-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  .countries-table th,
+  .countries-table td {
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  .countries-table th {
+    background: var(--theme-bg-secondary);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .countries-table img {
+    display: block;
+    border-radius: 2px;
+  }
+
+  /* 공통 숨김 처리 */
+  .country-item.hidden {
+    display: none !important;
+  }
+
+  /* 모바일 가독성 설정 (768px 이하) */
+  @media (max-width: 768px) {
+    .desktop-view {
+      display: none;
+    }
+    .mobile-view {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .country-card {
+      border: 1px solid var(--border);
+      border-radius: 0.6rem;
+      padding: 0.9rem 1rem;
+      background: var(--theme-bg);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.6rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-header img {
+      border-radius: 2px;
+    }
+
+    .card-title {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      font-size: 0.95rem;
+      line-height: 1.2;
+    }
+
+    .card-title .en-name {
+      font-size: 0.8rem;
+      opacity: 0.75;
+    }
+
+    .un-tag {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.3rem;
+      background: var(--theme-bg-secondary);
+      opacity: 0.8;
+      white-space: nowrap;
+    }
+
+    .un-tag.is-un {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    :global(.dark) .un-tag.is-un {
+      background: #075985;
+      color: #bae6fd;
+    }
+
+    .card-body {
+      display: grid;
+      gap: 0.35rem;
+      font-size: 0.875rem;
+    }
+
+    .info-row {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .info-row .label {
+      font-weight: 600;
+      min-width: 36px;
+      opacity: 0.7;
+    }
+  }
+</style>
+
+<script>
+  function initCountryFilter() {
+    const wrapper = document.querySelector('.countries-wrapper');
+    if (!wrapper) return;
+
+    const searchInput = wrapper.querySelector('#search-input') as HTMLInputElement | null;
+    const continentFilter = wrapper.querySelector('#continent-filter') as HTMLSelectElement | null;
+    const unFilter = wrapper.querySelector('#un-filter') as HTMLSelectElement | null;
+    const resultCount = wrapper.querySelector('#result-count') as HTMLElement | null;
+
+    // 테이블 행(tr)과 카드 요소(.country-card) 모두 탐색
+    const items = wrapper.querySelectorAll('.country-item');
+
+    if (!searchInput || !continentFilter || !unFilter || !resultCount) return;
+
+    // 모바일/데스크톱 중 복사본이 있으므로 전체 국가 수는 items.length / 2
+    const total = items.length / 2;
+
+    function filterCountries() {
+      const query = searchInput!.value.toLowerCase().trim();
+      const continent = continentFilter!.value;
+      const un = unFilter!.value;
+
+      let visibleCount = 0;
+
+      items.forEach((item) => {
+        const name = item.getAttribute('data-name')?.toLowerCase() || '';
+        const capital = item.getAttribute('data-capital')?.toLowerCase() || '';
+        const code = item.getAttribute('data-code')?.toLowerCase() || '';
+        const rowContinent = item.getAttribute('data-continent') || '';
+        const rowUn = String(item.getAttribute('data-un'));
+
+        const matchSearch =
+          !query ||
+          name.includes(query) ||
+          capital.includes(query) ||
+          code.includes(query);
+
+        const matchContinent = !continent || rowContinent === continent;
+        const matchUn = !un || rowUn === un;
+
+        if (matchSearch && matchContinent && matchUn) {
+          item.classList.remove('hidden');
+          // 중복 카운트를 피하기 위해 tr 요소 기준으로만 visible 수 산출
+          if (item.tagName === 'TR') visibleCount++;
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+
+      resultCount!.textContent = `검색 결과: ${visibleCount}개국 / 총 ${total}개국`;
+    }
+
+    // 기존 이벤트 제어 후 새로 연결
+    searchInput.removeEventListener('input', filterCountries);
+    continentFilter.removeEventListener('change', filterCountries);
+    unFilter.removeEventListener('change', filterCountries);
+
+    searchInput.addEventListener('input', filterCountries);
+    continentFilter.addEventListener('change', filterCountries);
+    unFilter.addEventListener('change', filterCountries);
+  }
+
+  // Astro View Transitions 및 일반 페이지 로드 대응
+  document.addEventListener('astro:page-load', initCountryFilter);
+  initCountryFilter();
+</script>
