@@ -520,3 +520,198 @@ example.jpg예: 경로가 인 항목을 표시하고 싶다고 가정해 보겠�
 <img src="/assets/images/example.jpg" alt="something">
 ```
 
+---
+
+## 광고 영역 설정
+
+```ts file=src/pages/posts/[...slug]/index.astro
+    <div class="my-2 flex items-center gap-2">
+      <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" />
+      <span
+        aria-hidden="true"
+        class:list={[
+          "text-muted-foreground max-sm:hidden",
+          { hidden: !config.features.editPost?.enabled || hideEditPost },
+        ]}
+      >
+        |
+      </span>
+      <EditPost {hideEditPost} {post} class="max-sm:hidden" />
+    </div>
+    // [!code ++:2]
+    <div class="ad-container my-6 flex min-h-[90px] w-full items-center justify-center bg-gray-50/50 dark:bg-gray-800/20">
+    </div>
+    <article
+      id="article"
+      class:list={[
+        "mt-8 w-full",
+        "app-prose max-w-app",
+        "prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)",
+      ]}
+    >
+      <Content />
+    </article>
+    // [!code ++:2]
+    <div class="ad-container my-6 flex min-h-[120px] w-full items-center justify-center bg-gray-50/50 dark:bg-gray-800/20">
+    </div>
+    <hr class="my-8 border-dashed" />
+```
+
+---
+
+## 새로운 상단 네비(메뉴) 추가하기
+
+
+새로운 파일 추가
+
+```ts file=src/components/NewTopNav.astro
+페이지 구성
+```
+
+
+```ts file=src/components/Breadcrumb.astro
+const navLabels: Record<string, string> = {
+  posts: t.nav.posts,
+  tags: t.nav.tags,
+  about: t.nav.about,
+  // [!code ++]
+  newtopnav: t.nav.newtopnav,
+  archives: t.nav.archives,
+  search: t.nav.search,
+};
+```
+
+
+```ts file=src/components/Header.astro
+        <li class="col-span-2">
+          <a
+            href={getRelativeLocaleUrl(locale, "about")}
+            class:list={{ "active-nav": isActive("/about") }}
+          >
+            {t.nav.about}
+          </a>
+        </li>
+        // [!code ++:8]
+        <li class="col-span-2">
+          <a
+            href={getRelativeLocaleUrl(locale, "newtopnav")}
+            class:list={{ "active-nav": isActive("/newtopnav") }}
+          >
+            {t.nav.newtopnav}
+          </a>
+        </li>
+        {
+          features.showArchives && (
+            <li class="col-span-2">
+              <LinkButton
+```
+
+
+```ts file=src/content/pages/newtopnav.md
+---
+title: "새로운 상단 메뉴"
+description: "파일명은 .mx 그리고 .mdx 둘다 가능합니다."
+---
+
+// [!code ++]
+import NewTopNav from "../../components/NewTopNav.astro";
+
+이 내용이 먼저 보여지고 하단에 NewTopNav.astro의 작성내용이 생깁니다.
+
+// [!code ++]
+<NewTopNav />
+```
+
+
+```ts file=src/i18n/types.ts
+export interface UIStrings {
+  nav: {
+    home: string;
+    posts: string;
+    tags: string;
+    about: string;
+    // [!code ++]
+    newtopnav: string;
+    archives: string;
+    search: string;
+  };
+```
+
+
+```ts file=src/i18n/lang/en.ts
+export default {
+  nav: {
+    home: "Home",
+    posts: "Posts",
+    tags: "Tags",
+    about: "About",
+    // [!code ++]
+    newtopnav: "NewTopNav",
+    archives: "Archives",
+    search: "Search",
+  },
+```
+
+
+```ts file=src/i18n/lang/ko.ts
+export default {
+  nav: {
+    home: "홈",
+    posts: "글",
+    tags: "태그",
+    about: "소개",
+    // [!code ++]
+    newtopnav: "새로운상단메뉴",
+    archives: "보관함",
+    search: "검색",
+  },
+```
+
+
+새로운 파일 추가
+
+```ts file=src/pages/bookmarks.astro
+---
+import { getEntry, render } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import config from "@/config";
+
+// [!code ++]
+const newtopnav = await getEntry("pages", "newtopnav");
+
+// [!code ++:5]
+if (!newtopnav) {
+  throw new Error(
+    "Missing content entry: `newtopnav.md` or `newtopnav.mdx` in `src/content/pages/`"
+  );
+}
+
+// [!code ++]
+const { Content } = await render(newtopnav);
+---
+
+// [!code ++:6]
+<Layout
+  title={`${newtopnav.data.title} | ${config.site.title}`}
+  description={newtopnav.data.description}
+  ogImage={newtopnav.data.ogImage}
+  canonicalURL={newtopnav.data.canonicalURL}
+>
+  <Header />
+
+  <Breadcrumb />
+
+// [!code ++]
+  <Main pageTitle={newtopnav.data.title} class="app-prose">
+    <Content />
+  </Main>
+
+  <Footer />
+</Layout>
+
+```
+
